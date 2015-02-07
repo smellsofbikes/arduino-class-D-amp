@@ -1,0 +1,30 @@
+void setup() {
+  pinMode(9, OUTPUT); //pwm
+  pinMode(10, OUTPUT);//pwm inverted
+  pinMode(A3, INPUT); //analog input
+  // com1a1 is non-inverted, com1b1 and com1b0 is inverted, 
+  TCCR1A = (1<<COM1A1) | (1<<COM1B1) | (1<< COM1B0) | (1<<WGM10) | (1<<WGM11);
+  // this should set 10 bit fast pwm mode, set clock full speed
+  TCCR1B = (1 << WGM12) | (1 << CS10) | (0<<CS11); 
+  OCR1A = 0; // initialize 
+  OCR1B = 0; // initialize
+  ICR1 = 0b0000001111111111; //set to 10 bit pwm
+      
+  DIDR0 = 0x3F;            // digital inputs disabled
+  ADMUX = 0x43;            // measuring on ADC3, use the internal 1.1 reference
+  ADCSRA = 0xAC;           // AD-converter on, interrupt enabled, prescaler = 16
+  ADCSRB = 0x40;           // AD channels MUX on, free running mode
+  bitWrite(ADCSRA, 6, 1);  // Start the conversion by setting bit 6 (=ADSC) in ADCSRA
+  sei();                   // set interrupt flag
+}
+
+void loop() {
+}
+
+ISR(ADC_vect) {
+  uint16_t analog_value;
+  analog_value = ADCL;        // store lower byte ADC
+  analog_value += ADCH << 8;  // store higher bytes ADC
+  OCR1A = analog_value;       
+  OCR1B = analog_value;
+}
