@@ -10,11 +10,11 @@ void setup() {
   OCR1B = 0; // initialize
   ICR1 = 0b0000001111111111; //set to 10 bit pwm
       
-  DIDR0 = 0x3F;            // digital inputs disabled
+  DIDR0 = 0b00111111;            // digital inputs disabled
   ADMUX = 0x43;            // measuring on ADC3, use the internal 1.1 reference
-  ADCSRA = 0xAC;           // AD-converter on, interrupt enabled, prescaler = 16
+  ADCSRA = 0b10101111;           // AD-converter on, interrupt enabled, prescaler = 128
   ADCSRB = 0x40;           // AD channels MUX on, free running mode
-  bitWrite(ADCSRA, 6, 1);  // Start the conversion by setting bit 6 (=ADSC) in ADCSRA
+  ADCSRA |= (1<<ADSC);  // Start the conversion by setting bit 6 (=ADSC) in ADCSRA
   sei();                   // set interrupt flag
 }
 
