@@ -24,7 +24,7 @@ void loop() {
 ISR(ADC_vect) {
   uint16_t analog_value;
   analog_value = ADCL;        // store lower byte ADC
-  analog_value += ADCH << 8;  // store higher bytes ADC
+  analog_value += ADCH << 8;  // store higher bytes ADC  Some compilers recognize that this is a ten bit register and do this automatically
   OCR1A = analog_value;       
-  OCR1B = analog_value;
+  OCR1B = analog_value;       
 }
